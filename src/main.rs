@@ -1,10 +1,10 @@
+use chrono::{DateTime, FixedOffset, Local, Utc};
+use dotenv::dotenv;
 use std::{env, error::Error, sync::Arc};
+use tracing;
 use twilight_cache_inmemory::{InMemoryCache, ResourceType};
 use twilight_gateway::{Event, Intents, Shard, ShardId};
-use twilight_http::Client as HttpClient;
-use tracing;
-use dotenv::dotenv;
-use chrono::{DateTime, FixedOffset, Local, Utc};
+use twilight_http::{request::channel::reaction::RequestReactionType, Client as HttpClient};
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn Error + Send + Sync>> {
@@ -55,7 +55,6 @@ async fn main() -> Result<(), Box<dyn Error + Send + Sync>> {
 const ABBY_HA_ENDPOINT: &str = "snip";
 const ABBY_HA_CHANNELS: [u64; 2] = [1097704917092794540, 1084011209096974437];
 
-
 async fn handle_event(
     event: Event,
     http: Arc<HttpClient>,
@@ -70,25 +69,38 @@ async fn handle_event(
             }
             match msg.content.as_str() {
                 "!ping" => {
-                    http.create_message(msg.channel_id).content("Pong!")?.await?;
+                    http.create_message(msg.channel_id)
+                        .content("Pong!")?
+                        .await?;
                     println!("Ping-ed by {}", msg.author.name)
                 }
-                "!time" => { 
+                "!time" => {
                     let utc_time = DateTime::<Utc>::from_utc(Local::now().naive_utc(), Utc);
                     let mut offset = FixedOffset::west_opt(0);
                     match msg.author.id.get() {
                         // alex
-                        108429628560924672 => {
-                            offset = FixedOffset::west_opt(8*3600)
-                        }
+                        108429628560924672 => offset = FixedOffset::west_opt(8 * 3600),
                         // abby
-                        253233185800847361 => {
-                            offset = FixedOffset::west_opt(4*3600)
-                        }
+                        253233185800847361 => offset = FixedOffset::west_opt(4 * 3600),
                         _ => {}
                     }
-                    let stamp = utc_time.with_timezone(&offset.unwrap()).format("%d/%m/%Y %H:%M");
-                    http.create_message(msg.channel_id).content(format!("It's {stamp} right now!").as_str())?.await?;
+                    let stamp = utc_time
+                        .with_timezone(&offset.unwrap())
+                        .format("%d/%m/%Y %H:%M");
+                    http.create_message(msg.channel_id)
+                        .content(format!("It's {stamp} right now!").as_str())?
+                        .await?;
+                }
+                "!react_self" => {
+                    let msg = http
+                        .create_message(msg.channel_id)
+                        .content("Test!")?
+                        .await?
+                        .model()
+                        .await?;
+
+                    let react = RequestReactionType::Unicode { name: "🌃" };
+                    http.create_reaction(msg.channel_id, msg.id, &react).await?;
                 }
                 _ => {}
             }
