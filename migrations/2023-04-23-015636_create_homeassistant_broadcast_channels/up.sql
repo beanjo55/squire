@@ -3,8 +3,8 @@ CREATE TABLE IF NOT EXISTS ha_broadcast_channels (
     webhook_id TEXT NOT NULL,
     name TEXT NOT NULL,
     description TEXT,
-    created_at TIMESTAMPZ NOT NULL,
-    last_active TIMESTAMPZ NOT NULL,
-)
+    created_at TIMESTAMPTZ NOT NULL,
+    last_active TIMESTAMPTZ NOT NULL
+);
 
-ALTER TABLE ha_broadcast_channels ADD INDEX ha_broadcast_channels_name_idx (name);
+CREATE INDEX ha_broadcast_channels_name_idx on ha_broadcast_channels (name);

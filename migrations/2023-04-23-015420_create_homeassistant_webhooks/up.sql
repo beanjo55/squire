@@ -3,7 +3,7 @@ CREATE TABLE IF NOT EXISTS ha_webhooks (
     url TEXT NOT NULL,
     secret TEXT,
     name TEXT NOT NULL,
-    description TEXT,
-)
+    description TEXT
+);
 
-ALTER TABLE ha_webhooks ADD INDEX ha_webhooks_name_idx (name);
+CREATE INDEX ha_webhooks_name_idx on ha_webhooks (name);
