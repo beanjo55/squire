@@ -15,7 +15,7 @@ diesel::table! {
 diesel::table! {
     counters_entries (id) {
         id -> Uuid,
-        source_counter_id -> Text,
+        source_counter_id -> Uuid,
         source_guild_id -> Int8,
         user_id -> Int8,
         created_at -> Timestamptz,
@@ -25,7 +25,7 @@ diesel::table! {
 diesel::table! {
     ha_broadcast_channels (id) {
         id -> Uuid,
-        webhook_id -> Text,
+        webhook_id -> Uuid,
         name -> Text,
         description -> Nullable<Text>,
         created_at -> Timestamptz,
@@ -55,6 +55,9 @@ diesel::table! {
         ignored_users -> Nullable<Array<Nullable<Int8>>>,
     }
 }
+
+diesel::joinable!(counters_entries -> counters (source_counter_id));
+diesel::joinable!(ha_broadcast_channels -> ha_webhooks (webhook_id));
 
 diesel::allow_tables_to_appear_in_same_query!(
     counters,
