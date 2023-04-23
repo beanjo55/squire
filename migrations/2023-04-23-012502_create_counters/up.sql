@@ -10,7 +10,7 @@ CREATE TABLE IF NOT EXISTS counters (
 
 CREATE TABLE IF NOT EXISTS counters_entries (
     id UUID PRIMARY KEY,
-    source_counter_id TEXT NOT NULL,
+    source_counter_id UUID REFERENCES counters(id) ON DELETE CASCADE NOT NULL,
     source_guild_id BIGINT NOT NULL,
     user_id BIGINT NOT NULL,
     created_at TIMESTAMPTZ NOT NULL
