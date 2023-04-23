@@ -11,7 +11,7 @@ pub struct HAWebhook {
     pub url: String,
     pub secret: Nullable<String>,
     pub name: String,
-    description: Nullable<String>,
+    pub description: Nullable<String>,
 }
 
 #[derive(Insertable)]
