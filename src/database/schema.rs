@@ -8,7 +8,7 @@ diesel::table! {
         description -> Nullable<Text>,
         created_at -> Timestamptz,
         last_active -> Timestamptz,
-        guild_ids -> Nullable<Array<Nullable<Int8>>>,
+        guild_ids -> Array<Int8>,
     }
 }
 

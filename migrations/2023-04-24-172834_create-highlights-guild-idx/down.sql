@@ -1,0 +1,1 @@
+DROP INDEX highlights_guild_idx

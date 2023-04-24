@@ -5,7 +5,7 @@ CREATE TABLE IF NOT EXISTS counters (
     description TEXT,
     created_at TIMESTAMPTZ NOT NULL,
     last_active TIMESTAMPTZ NOT NULL,
-    guild_ids BIGINT ARRAY
+    guild_ids BIGINT[] NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS counters_entries (

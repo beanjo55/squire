@@ -1,18 +1,17 @@
 use crate::database::schema::{counters, counters_entries};
-use chrono::NaiveDateTime;
-use diesel::helper_types::Nullable;
+use chrono::prelude::*;
 use diesel::prelude::*;
 use uuid::Uuid;
 
-#[derive(Queryable, Identifiable)]
+#[derive(Queryable)]
 pub struct Counter {
     pub id: Uuid,
     pub name: String,
     pub author: i64,
-    pub description: Nullable<String>,
+    pub description: Option<String>,
     pub created_at: NaiveDateTime,
     pub last_active: NaiveDateTime,
-    pub guild_ids: Nullable<Vec<i64>>,
+    pub guild_ids: Vec<i64>,
 }
 
 #[derive(Insertable)]
@@ -21,7 +20,7 @@ pub struct NewCounter<'a> {
     pub name: &'a str,
     pub author: i64,
     pub description: Option<&'a str>,
-    pub guild_ids: Option<&'a Vec<i64>>,
+    pub guild_ids: &'a Vec<i64>,
 }
 
 #[derive(Queryable, Associations, Identifiable)]

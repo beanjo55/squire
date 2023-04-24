@@ -1,6 +1,5 @@
 use crate::database::schema::{ha_broadcast_channels, ha_webhooks};
 use chrono::NaiveDateTime;
-use diesel::helper_types::Nullable;
 use diesel::prelude::*;
 use uuid::Uuid;
 
@@ -9,9 +8,9 @@ use uuid::Uuid;
 pub struct HAWebhook {
     pub id: Uuid,
     pub url: String,
-    pub secret: Nullable<String>,
+    pub secret: Option<String>,
     pub name: String,
-    pub description: Nullable<String>,
+    pub description: Option<String>,
 }
 
 #[derive(Insertable)]
@@ -29,7 +28,7 @@ pub struct HABroadcastChannel {
     pub id: Uuid,
     pub webhook_id: Uuid,
     pub name: String,
-    pub description: Nullable<String>,
+    pub description: Option<String>,
     pub created_at: NaiveDateTime,
     pub last_active: NaiveDateTime,
 }

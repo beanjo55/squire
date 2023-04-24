@@ -1,6 +1,5 @@
 use crate::database::schema::highlights;
 use chrono::NaiveDateTime;
-use diesel::helper_types::Nullable;
 use diesel::prelude::*;
 
 #[derive(Queryable)]
@@ -11,10 +10,10 @@ pub struct Highlight {
     pub guild_id: i64,
     pub phrase: String,
     pub created_at: NaiveDateTime,
-    pub last_used_at: Nullable<NaiveDateTime>,
-    pub snooze_until: Nullable<NaiveDateTime>,
-    pub ignored_channels: Nullable<Vec<i64>>,
-    pub ignored_users: Nullable<Vec<i64>>,
+    pub last_used_at: Option<NaiveDateTime>,
+    pub snooze_until: Option<NaiveDateTime>,
+    pub ignored_channels: Option<Vec<i64>>,
+    pub ignored_users: Option<Vec<i64>>,
 }
 
 #[derive(Insertable)]

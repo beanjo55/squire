@@ -1,0 +1,1 @@
+CREATE INDEX highlights_guild_idx ON highlights (guild_id);
