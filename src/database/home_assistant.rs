@@ -3,7 +3,7 @@ use chrono::NaiveDateTime;
 use diesel::prelude::*;
 use uuid::Uuid;
 
-#[derive(Queryable, Identifiable)]
+#[derive(Queryable, Identifiable, Debug)]
 #[diesel(table_name = ha_webhooks)]
 pub struct HAWebhook {
     pub id: Uuid,
@@ -22,7 +22,7 @@ pub struct NewHAWebhook<'a> {
     pub description: Option<&'a str>,
 }
 
-#[derive(Queryable, Identifiable)]
+#[derive(Queryable, Identifiable, Debug)]
 #[diesel(table_name = ha_broadcast_channels)]
 pub struct HABroadcastChannel {
     pub id: Uuid,

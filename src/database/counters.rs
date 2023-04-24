@@ -3,7 +3,7 @@ use chrono::prelude::*;
 use diesel::prelude::*;
 use uuid::Uuid;
 
-#[derive(Queryable)]
+#[derive(Queryable, Debug)]
 pub struct Counter {
     pub id: Uuid,
     pub name: String,

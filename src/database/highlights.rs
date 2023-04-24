@@ -2,7 +2,7 @@ use crate::database::schema::highlights;
 use chrono::NaiveDateTime;
 use diesel::prelude::*;
 
-#[derive(Queryable)]
+#[derive(Queryable, Debug)]
 #[diesel(table_name = highlights)]
 #[diesel(primary_key(user_id, guild_id, phrase))]
 pub struct Highlight {
