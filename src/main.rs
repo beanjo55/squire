@@ -1,12 +1,17 @@
 use chrono::{DateTime, FixedOffset, Local, Utc};
 use dotenv::dotenv;
-use std::{env, error::Error, sync::Arc};
+use std::{
+    env,
+    error::Error,
+    sync::{Arc, Mutex},
+};
 use tracing;
 use twilight_cache_inmemory::{InMemoryCache, ResourceType};
 use twilight_gateway::{Event, Intents, Shard, ShardId};
 use twilight_http::{request::channel::reaction::RequestReactionType, Client as HttpClient};
 
 pub mod database;
+pub mod redis;
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn Error + Send + Sync>> {
@@ -23,6 +28,7 @@ async fn main() -> Result<(), Box<dyn Error + Send + Sync>> {
     // The http client is separate from the gateway, so startup a new
     // one, also use Arc such that it can be cloned to other threads.
     let http = Arc::new(HttpClient::new(token));
+    let redis = Arc::new(Mutex::new(redis::connect_redis(&env::var("REDIS_URL")?)?));
 
     // Since we only care about messages, make the cache only process messages.
     let cache = InMemoryCache::builder()
