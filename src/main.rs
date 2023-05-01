@@ -11,6 +11,7 @@ use twilight_gateway::{Event, Intents, Shard, ShardId};
 use twilight_http::{request::channel::reaction::RequestReactionType, Client as HttpClient};
 
 pub mod database;
+pub mod models;
 pub mod redis;
 
 #[tokio::main]
@@ -55,7 +56,11 @@ async fn main() -> Result<(), Box<dyn Error + Send + Sync>> {
         cache.update(&event);
 
         // Spawn a new task to handle the event
-        tokio::spawn(handle_event(event, Arc::clone(&http)));
+        tokio::spawn(handle_event(
+            event,
+            Arc::clone(&http),
+            reqwest_client.clone(),
+        ));
     }
 
     Ok(())
@@ -111,6 +116,41 @@ async fn handle_event(
 
                     let react = RequestReactionType::Unicode { name: "🌃" };
                     http.create_reaction(msg.channel_id, msg.id, &react).await?;
+                }
+                "!aurora" => {
+                    println!("Getting aurora forcast");
+                    //  do a http request
+                    let aurora_forcast = reqwest_client
+                        .get("https://services.swpc.noaa.gov/json/ovation_aurora_latest.json")
+                        .send()
+                        .await;
+                    let aurora_forcast = match aurora_forcast {
+                        Ok(x) => x,
+                        Err(e) => {
+                            println!("Error getting aurora forcast: {}", e);
+                            return Ok(());
+                        }
+                    };
+                    let aurora_forcast = aurora_forcast.json::<models::OvationAuroraLatest>().await;
+                    let aurora_forcast = match aurora_forcast {
+                        Ok(x) => x,
+                        Err(e) => {
+                            println!("Error getting aurora forcast: {}", e);
+                            return Ok(());
+                        }
+                    };
+                    println!("Forcast time: {}", aurora_forcast.forcast_time);
+                    // wasilla is at 61, -149
+                    let wasilla = aurora_forcast
+                        .coordinates
+                        .iter()
+                        .find(|&x| x[1] == 61 && x[0] == -149 + 360) // data is range 0-360, not -180 to +180
+                        .unwrap();
+                    println!("Wasilla: {:?}", wasilla);
+                    // send back the forcast value for wasilla ak
+                    http.create_message(msg.channel_id)
+                        .content(format!("Forcast for wasilla: {}", wasilla[2]).as_str())?
+                        .await?;
                 }
                 _ => {}
             }
