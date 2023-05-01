@@ -29,6 +29,7 @@ async fn main() -> Result<(), Box<dyn Error + Send + Sync>> {
     // one, also use Arc such that it can be cloned to other threads.
     let http = Arc::new(HttpClient::new(token));
     let redis = Arc::new(Mutex::new(redis::connect_redis(&env::var("REDIS_URL")?)?));
+    let reqwest_client = reqwest::Client::new(); // reqwest uses arc internally, so we don't need to wrap it in an arc
 
     // Since we only care about messages, make the cache only process messages.
     let cache = InMemoryCache::builder()
@@ -66,6 +67,7 @@ const ABBY_HA_CHANNELS: [u64; 2] = [1097704917092794540, 1084011209096974437];
 async fn handle_event(
     event: Event,
     http: Arc<HttpClient>,
+    reqwest_client: reqwest::Client,
 ) -> Result<(), Box<dyn Error + Send + Sync>> {
     match event {
         Event::MessageCreate(msg) => {
