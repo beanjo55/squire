@@ -1,6 +1,15 @@
 use serde::{self, Deserialize};
+use serde_tuple::Deserialize_tuple;
 
-#[derive(Deserialize)]
+#[derive(Deserialize_tuple, Debug)]
+pub struct OvationAuroraLatestCoordinates {
+    pub longitude: i16,
+    pub latitude: i16,
+    pub value: i16,
+}
+
+#[derive(Deserialize, Debug)]
+
 pub struct OvationAuroraLatest {
     #[serde(rename = "Observation Time")]
     pub observation_time: String,
@@ -9,7 +18,7 @@ pub struct OvationAuroraLatest {
     #[serde(rename = "Data Format")]
     pub data_format: String,
     #[serde(rename = "coordinates")]
-    pub coordinates: Vec<[i16; 3]>,
+    pub coordinates: Vec<OvationAuroraLatestCoordinates>,
     #[serde(rename = "type")]
     pub data_type: String,
 }

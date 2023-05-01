@@ -144,12 +144,12 @@ async fn handle_event(
                     let wasilla = aurora_forcast
                         .coordinates
                         .iter()
-                        .find(|&x| x[1] == 61 && x[0] == -149 + 360) // data is range 0-360, not -180 to +180
+                        .find(|&x| x.latitude == 61 && x.longitude == -149 + 360) // data is range 0-360, not -180 to +180
                         .unwrap();
                     println!("Wasilla: {:?}", wasilla);
                     // send back the forcast value for wasilla ak
                     http.create_message(msg.channel_id)
-                        .content(format!("Forcast for wasilla: {}", wasilla[2]).as_str())?
+                        .content(format!("Forcast for wasilla: {}", wasilla.value).as_str())?
                         .await?;
                 }
                 _ => {}
