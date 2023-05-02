@@ -19,6 +19,7 @@ diesel::table! {
         source_guild_id -> Int8,
         user_id -> Int8,
         created_at -> Timestamptz,
+        sub_counter_id -> Nullable<Uuid>,
     }
 }
 
@@ -56,8 +57,19 @@ diesel::table! {
     }
 }
 
+diesel::table! {
+    sub_counters (id) {
+        id -> Uuid,
+        root_counter_id -> Uuid,
+        name -> Text,
+        description -> Nullable<Text>,
+    }
+}
+
 diesel::joinable!(counters_entries -> counters (source_counter_id));
+diesel::joinable!(counters_entries -> sub_counters (sub_counter_id));
 diesel::joinable!(ha_broadcast_channels -> ha_webhooks (webhook_id));
+diesel::joinable!(sub_counters -> counters (root_counter_id));
 
 diesel::allow_tables_to_appear_in_same_query!(
     counters,
@@ -65,4 +77,5 @@ diesel::allow_tables_to_appear_in_same_query!(
     ha_broadcast_channels,
     ha_webhooks,
     highlights,
+    sub_counters,
 );

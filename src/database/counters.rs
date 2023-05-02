@@ -1,4 +1,4 @@
-use crate::database::schema::{counters, counters_entries};
+use crate::database::schema::{counters, counters_entries, sub_counters};
 use chrono::prelude::*;
 use diesel::prelude::*;
 use uuid::Uuid;
@@ -23,6 +23,16 @@ pub struct NewCounter<'a> {
     pub guild_ids: &'a Vec<i64>,
 }
 
+#[derive(Queryable, Associations)]
+#[diesel(table_name = sub_counters)]
+#[diesel(belongs_to(Counter, foreign_key = root_counter_id))]
+pub struct SubCounter {
+    pub id: Uuid,
+    pub root_counter_id: Uuid,
+    pub nmae: String,
+    pub description: Option<String>,
+}
+
 #[derive(Queryable, Associations, Identifiable)]
 #[diesel(belongs_to(Counter, foreign_key = source_counter_id ))]
 #[diesel(table_name = counters_entries)]
@@ -30,6 +40,7 @@ pub struct CounterEntry {
     pub id: Uuid,
     pub source_counter_id: Uuid,
     pub source_guild_id: i64,
+    pub sub_counter_id: Option<Uuid>,
     pub user_id: i64,
     pub created_at: NaiveDateTime,
 }
